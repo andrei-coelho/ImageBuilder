@@ -17,6 +17,7 @@ class ImageBuilder {
     private $ext;
     private $salt;
 
+    private $png = false;
     private $to = false;
     private $generate = false;
 
@@ -33,11 +34,7 @@ class ImageBuilder {
             $this -> createCopy(true);
             return;
         }
-
-        $this ->from = __DIR__
-        .($from[0] == "\\" || $from[0] == "/" ? "": DIRECTORY_SEPARATOR)
-        .str_replace(["/","\\"], DIRECTORY_SEPARATOR, $from);
-
+        $this ->from = $from;
         if(!($this ->source = getimagesize($this -> from))){
             throw new ImageBuilderException($from, 1);
         }
@@ -64,13 +61,21 @@ class ImageBuilder {
         return $this->fullName;
     }
 
+    public function destroy(){
+        return imagedestroy($this->copy);
+    }
+
     private function createCopy(bool $url = false){
 
         if(!$url){
             
             switch($this ->source['mime']){
                 case "image/jpeg": $this -> copy = imagecreatefromjpeg($this->from); $this->ext = ".jpg"; break;
-                case "image/png": $this -> copy = imagecreatefrompng($this->from); $this->ext = ".png"; break;
+                case "image/png": 
+                    $this -> copy = imagecreatefrompng($this->from);
+                    $this->ext = ".png";
+                    $this->png = true;
+                    break;
                 default: $this -> copy = false;
             }
             if(!$this->copy){
@@ -94,7 +99,7 @@ class ImageBuilder {
     }
 
     public function resize(string $size){
-
+        
         if(is_string($size) && preg_match('/((^\d{2,}x\d{2,}$)|(^\*x\d{2,}$)|(^\d{2,}x\*$))/i', $size)){
             $vars = $this->generateWidthHeight(explode("x", strtolower($size)));
             if($this->generateImageResized($vars[1], $vars[2])){
@@ -136,16 +141,25 @@ class ImageBuilder {
     }
 
     private function generateImageResized(int $width, int $height){
+       
         $this->imageCreate = imagecreatetruecolor($width, $height);
+        if($this->png){
+            imagealphablending( $this->imageCreate, false);
+            imagesavealpha( $this->imageCreate, true);
+        }
         return imagecopyresized($this->imageCreate, $this->copy, 0, 0, 0, 0, $width, $height,$this->source[0], $this->source[1]);
     }
 
     private function save($resource, string $name){
 
-        $path = $this->to !== false ? __DIR__.DIRECTORY_SEPARATOR.str_replace(["/","\\"], DIRECTORY_SEPARATOR, $this->to) : $this->from;
+        $path = $this->to !== false ? $this->to : $this->from;
         $file = $this->to !== false ?$path.DIRECTORY_SEPARATOR.$name.$this->ext : $path;
         
-        imagepng($this->imageCreate, $file, 9);
+        switch($this ->source['mime']){
+            case "image/jpeg": imagejpeg($this->imageCreate, $file, 100); break;
+            case "image/png": imagepng($this->imageCreate, $file, 9); break;
+            default: imagejpeg($this->imageCreate, $file, 100);
+        }
     }
 
 }

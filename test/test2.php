@@ -1,22 +1,19 @@
 <?php 
 
 /**
- * Resize Image Test JPG turtle
+ * Resize Image Test PNG Rabbit in transparence
  */
 
 require "../ImageBuilder.php";
 
 try {
-    $image = new ImageBuilder("../images/sea-turtle-960x541.jpg");
+    $image = new ImageBuilder("../images/rabbit.png");
     $image -> setPath("../img");
-    $image -> setName("copy");
+    $image -> setName("copy_rabbit");
     $image -> resize("700x*");
-    $image -> resize("500x*");
-    $image -> resize("300x*");
     $image -> resize("200x*");
     $image -> destroy();
 } catch (Exception $e){
     echo $e -> getMessage();
 }
-
 
