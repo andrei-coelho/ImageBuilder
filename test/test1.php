@@ -11,9 +11,6 @@ try {
     $image -> setPath("../img");
     $image -> setName("copy");
     $image -> resize("700x*");
-    $image -> resize("500x*");
-    $image -> resize("300x*");
-    $image -> resize("200x*");
     $image -> destroy();
 } catch (Exception $e){
     echo $e -> getMessage();

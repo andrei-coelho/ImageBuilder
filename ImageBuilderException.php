@@ -20,7 +20,7 @@ class ImageBuilderException extends Exception {
                 break;
             
             case 2:
-                $this->msg = "Too few arguments to function ImageBuilder::resize(), 
+                $this->msg = "Too few arguments to function ImageBuilder::copyResize(), 
                     $msg passed. Minimum arguments required are 2.";
                 break;
 
