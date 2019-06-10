@@ -98,27 +98,28 @@ class ImageBuilder {
         www\.[a-zA-Z0-9]+\.[^\s]{2,})/', $from);
     }
 
-    public function copyResize(){
+    public function resize(){
 
         if(($count = func_num_args()) == 0)
             throw new ImageBuilderException($count, 2);
 
         $args = func_get_args();
 
-        foreach ($args as $size) {
-            if(is_string($size) && preg_match('/((^\d{2,}x\d{2,}$)|(^\*x\d{2,}$)|(^\d{2,}x\*$))/i', $size)){
-                $vars = $this->generateWidthHeight(explode("x", strtolower($size)));
-                if($this->generateImageResized($vars[1], $vars[2])){
-                    $this->save($this->imageCreate, $this->generateName($vars[0]));
-                    continue;
+        if($count > 1){
+            foreach ($args as $size) {
+                if(is_string($size) && preg_match('/((^\d{2,}x\d{2,}$)|(^\*x\d{2,}$)|(^\d{2,}x\*$))/i', $size)){
+                    $vars = $this->generateWidthHeight(explode("x", strtolower($size)));
+                    if($this->generateImageResized($vars[1], $vars[2])){
+                        $this->save($this->imageCreate, $this->generateName($vars[0]));
+                        continue;
+                    }
                 }
+                throw new ImageBuilderException($size, 3);
             }
-            throw new ImageBuilderException($size, 3);
+            return;
         }
-    }
 
-    public function resize(string $size){
-        
+        $size = $args[0];
         if(is_string($size) && preg_match('/((^\d{2,}x\d{2,}$)|(^\*x\d{2,}$)|(^\d{2,}x\*$))/i', $size)){
             $vars = $this->generateWidthHeight(explode("x", strtolower($size)));
             if($this->generateImageResized($vars[1], $vars[2])){
@@ -127,7 +128,6 @@ class ImageBuilder {
             return;
         }
         throw new ImageBuilderException($size, 3);
-        
     }
 
     private function generateWidthHeight(array $sizes){
