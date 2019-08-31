@@ -1,6 +1,8 @@
 <?php 
 
-class ImageBuilderException extends Exception {
+namespace src;
+
+class ImageBuilderException extends \Exception {
 
     private $msg;
 
