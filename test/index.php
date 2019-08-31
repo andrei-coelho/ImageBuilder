@@ -1,5 +1,7 @@
 <?php 
 
-include "../autoload.php";
+require "../autoload.php";
 
-new ImageBuilderNew('lala');
+BuildImage::
+from('images/rabbit.png', 'alias_um')
+->copies(['alias_dois', 'alias_tres']);

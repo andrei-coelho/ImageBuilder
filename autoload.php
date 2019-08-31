@@ -2,7 +2,7 @@
 
 function __autoload($name) {
 
-    $file = $name == 'ImageBuilderNew' 
+    $file = $name == 'BuildImage' 
     ? __DIR__.DIRECTORY_SEPARATOR."src".DIRECTORY_SEPARATOR.$name. ".php"
     : __DIR__.DIRECTORY_SEPARATOR.$name. ".php";
 

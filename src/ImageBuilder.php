@@ -120,7 +120,7 @@ class ImageBuilder {
         }
 
         $size = $args[0];
-        if(is_string($size) && preg_match('/((^\d{2,}x\d{2,}$)|(^\*x\d{2,}$)|(^\d{2,}x\*$))/i', $size)){
+        if(is_string($size) && ){
             $vars = $this->generateWidthHeight(explode("x", strtolower($size)));
             if($this->generateImageResized($vars[1], $vars[2])){
                 $this->save($this->imageCreate, $this->generateName());
