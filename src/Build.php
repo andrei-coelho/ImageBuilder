@@ -8,47 +8,69 @@
 namespace ImageBuilder;
 
 use ImageBuilder\ImageBuilderException as ImageBuilderException;
-use ImageBuilder\ImageBuilder as ImageBuilder;
 use ImageBuilder\Image as Image;
 
-class ImageBuilder {
-    
-   
-   	public static function build(Image $image)
+class Build {
+
+   	public static function image(Image $image, string $from, string $mime)
    	{
-   		# code...
+   		
+   		$imageInfo = $image -> getInfo();
+
+   		switch ($mime) {
+   			case 'jpg':
+   				$source = imagecreatefromjpeg($from);
+   				break;
+   			case 'png':
+   				$source = imagecreatefrompng($from);
+   				break;
+   			default:
+   				return;
+   		}
+
+   		# actions... here we go!
+
+   		foreach ($imageInfo['actions'] as $action => $values) {
+   			
+   		}
+
+   		$create = $imageInfo['mime']."_create";
+   		self::$create($image);
    	}
 
-    public function setPath(string $path){
-        $this->to = $path;
-    }
 
-    public function setSalt(string $salt){
-        $this->salt = $salt;
-    }
+   	/*                       *
+	*------------------------*
+	*      CREATE IMAGE      *
+	*------------------------*
+	*                        */
 
-    public function setName(string $name){
-        $this->name = $name;
-    }
+   	private static function jpg_create(Image $image, string $suffixed){
+   		echo "gerou a imagem jpg";
+   	}
 
-    public function getName(){
-        return $this->name;
-    }
+   	private static function png_create(Image $image, string $suffixed){
+   		echo "gerou a imagem png";
+   	}
 
-    public function getFullName(){
-        return $this->fullName;
-    }
+   
+   	/*                       *
+	*------------------------*
+	*         ACTIONS        *
+	*------------------------*
+	*                        */
 
-    public function destroy(){
-        return imagedestroy($this->copy);
-    }
+	private static function resize($source, array $sizes)
+	{
+		return imagecopyresized($thumb, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+	}
 
     private function createCopy(bool $url = false){
 
         if(!$url){
             
             switch($this ->source['mime']){
-                case "image/jpeg": $this -> copy = imagecreatefromjpeg($this->from); $this->ext = ".jpg"; break;
+                case "image/jpeg": $this -> copy =  $this->ext = ".jpg"; break;
                 case "image/png": 
                     $this -> copy = imagecreatefrompng($this->from);
                     $this->ext = ".png";
@@ -68,15 +90,8 @@ class ImageBuilder {
         }
     }
 
-    private function is_url(string $from){
-        return preg_match('/(https?:\/\/(?:www\.|(?!www))
-        [a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|
-        www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|
-        https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|
-        www\.[a-zA-Z0-9]+\.[^\s]{2,})/', $from);
-    }
 
-    public function resize(){
+    public function resizea(){
 
         if(($count = func_num_args()) == 0)
             throw new ImageBuilderException($count, 2);
@@ -98,7 +113,7 @@ class ImageBuilder {
         }
 
         $size = $args[0];
-        if(is_string($size) && ){
+        if(is_string($size) && true){
             $vars = $this->generateWidthHeight(explode("x", strtolower($size)));
             if($this->generateImageResized($vars[1], $vars[2])){
                 $this->save($this->imageCreate, $this->generateName());
@@ -106,35 +121,6 @@ class ImageBuilder {
             return;
         }
         throw new ImageBuilderException($size, 3);
-    }
-
-    private function generateWidthHeight(array $sizes){
-        if ($sizes[0] == "*"){
-            $multipl = $sizes[1] / $this->source[1];
-            $s = "_x".$sizes[1];
-            $h = $sizes[1];
-            $w =  (int)($this->source[0] * $multipl);
-        } else 
-        if ($sizes[1] == "*"){
-            $multipl = $sizes[0] / $this->source[0];
-            $s = $sizes[0]."x_";
-            $w = $sizes[0];
-            $h =  (int)($this->source[1] * $multipl);
-        } else {
-            $h = $sizes[1];
-            $w = $sizes[0];
-            $s = $sizes[0]."x".$sizes[1];
-        }
-        return [$s,$w,$h];
-    }
-
-    private function generateName(string $name = null){
-        if($this->name == null){
-            return sha1(date("dmY-His").rand(1,1000).($this->salt === null ? "__SALT__" : $this->salt));
-        }
-        if($name != null)
-            return $this->salt === null ? $this->name . "-" . $name: sha1($this->salt.$this->name). "-" .$name;
-        return $this->salt === null ? $this->name : sha1($this->salt.$this->name);
     }
 
     private function generateImageResized(int $width, int $height){
