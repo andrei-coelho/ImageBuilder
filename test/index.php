@@ -3,18 +3,16 @@
 require "../autoload.php";
 
 use ImageBuilder\BuildImage as BuildImage;
-/*
 
 $images = BuildImage::
 from('images/rabbit.png')
-->path_as('img/imagem_test.jpg')
-->resize('50x*')
+->copy(3)
 ->save();
 
 
+/*
 $img = getimagesize("http://lounge.obviousmag.org/por_tras_do_espelho/2012/10/as-imagens-de-sonho-de-anja-stiegler.html.jpg?v=20190825090142");
 var_dump($img);
-*/
 
 $im = imagecreatetruecolor(100, 100);
 
@@ -29,3 +27,5 @@ header('Content-Type: image/png');
 
 imagepng($im);
 imagedestroy($im);
+
+*/

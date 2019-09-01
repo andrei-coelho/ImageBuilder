@@ -14,10 +14,10 @@ use ImageBuilder\ImageBuilderException as ImageBuilderException;
 
 class Image {
 
-	private $resource;
-	private $actions = [];
-	private $filters = [];
-	private $modify  = false;
+	public $resource;
+	public $actions = [];
+	public $filters = [];
+	public $modify  = false;
 	
 	/**
 	* The informations of Image
@@ -25,17 +25,16 @@ class Image {
 	* @var string $path, $name, $mime
 	*
 	*/
-	private $path, $name, $mime;
+	public $path, $name, $mime;
 
-	public function __construct($resource, array $info)
+	public $sizes = [];
+
+	public function __construct(array $info, array $sizes)
 	{
-		if(!is_resource($resource) || get_resource_type($resource) !== 'gd') 
-			throw new ImageBuilderException(5);
-		
-		$this -> resource = $resource;
-		$this -> path     = $info[0];
-		$this -> name     = $info[1];
-		$this -> mime     = $info[2];
+		$this -> path   = $info[0];
+		$this -> name   = $info[1];
+		$this -> mime   = $info[2];
+		$this -> sizes  = $sizes;
 	}
 
 	public function change_info(array $info)
@@ -48,31 +47,9 @@ class Image {
 	}
 
 	public function resize(int $width, int $height)
-	{
-		$this -> actions[]['resize'] = [$width, $height];
-	}
-
-	public function getMime()
-	{
-		return $this -> mime;
-	}
-
-	public function getFrom()
-	{
-		return $this -> path . $this -> name;
-	}
-
-	public function getInfo():array
-	{
-		return [
-			'path'     => $this->path,
-			'name'     => $this->name,
-			'mime'     => $this->mime,
-			'resource' => $this->resource,
-			'actions'  => $this->actions,
-			'filters'  => $this->filters,
-			'modify'   => $this->modify			
-		];
+	{	
+		$this -> sizes = [$width, $height]; 
+		$this -> actions['resize'] = 'resize';
 	}
 
 	public function done()

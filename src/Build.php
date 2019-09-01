@@ -12,57 +12,90 @@ use ImageBuilder\Image as Image;
 
 class Build {
 
-   	public static function image(Image $image, string $from, string $mime)
-   	{
-   		
-   		$imageInfo = $image -> getInfo();
+	public static function image(Image $image, Image $copy, $alias)
+	{
 
-   		switch ($mime) {
-   			case 'jpg':
-   				$source = imagecreatefromjpeg($from);
-   				break;
-   			case 'png':
-   				$source = imagecreatefrompng($from);
-   				break;
-   			default:
-   				return;
-   		}
+		$isPng  = false;
+		$isCopy = count($image -> actions) === 0;
+
+		switch ($copy -> mime) {
+			case 'jpg':
+				$source = imagecreatefromjpeg($copy -> path . $copy -> name);
+				break;
+			case 'png':
+				$isPng = true;
+				$source = imagecreatefrompng($copy -> path . $copy -> name);
+				break;
+			default:
+				return;
+		}
+		
+		$image -> resource = 
+			$isCopy ?
+			$source :
+			@imagecreatetruecolor($image -> sizes[0], $image -> sizes[1]);
+
+		if($isPng) {
+			imagealphablending($image -> resource, false);
+            imagesavealpha($image -> resource, true);
+		}
 
    		# actions... here we go!
+   		foreach ($image -> actions as $action)
+		   $image -> resource = self::$action($source, $image -> sizes, $copy -> sizes, $isPng);
 
-   		foreach ($imageInfo['actions'] as $action => $values) {
-   			
-   		}
-
-   		$create = $imageInfo['mime']."_create";
-   		self::$create($image);
+   		# filters... it's your turn!
+   		foreach ($image -> filters as $filter => $values)
+			self::$filter();
+		
+		# save Image now!
+		$suffixed = $image -> modify ? "" : $alias."_"; 
+   		$create = $image -> mime."_create";
+   		self::$create($image, $suffixed);
    	}
 
-
-   	/*                       *
+	
+	/*                       *
 	*------------------------*
 	*      CREATE IMAGE      *
 	*------------------------*
 	*                        */
 
-   	private static function jpg_create(Image $image, string $suffixed){
-   		echo "gerou a imagem jpg";
-   	}
+	private static function jpg_create(Image $image, $suffixed)
+	{
+		imagejpeg($image -> resource, $image -> path . $suffixed . $image -> name, 100);
+		\imagedestroy($image -> resource);
+ 	}
 
-   	private static function png_create(Image $image, string $suffixed){
-   		echo "gerou a imagem png";
-   	}
+	private static function png_create(Image $image, $suffixed)
+	{
+		imagepng($image -> resource, $image -> path . $suffixed . $image -> name, 0);
+		\imagedestroy($image -> resource);
+	}
 
    
-   	/*                       *
+	/*                       *
 	*------------------------*
 	*         ACTIONS        *
 	*------------------------*
 	*                        */
 
-	private static function resize($source, array $sizes)
+	private static function resize($source, array $newsizes, array $copysizes, $isPng)
 	{
-		return imagecopyresized($thumb, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+		$res = @imagecreatetruecolor($newsizes[0], $newsizes[1]);
+		if($isPng) {
+			imagealphablending($res, false);
+            imagesavealpha($res, true);
+		}
+		imagecopyresized(
+			$res, 
+			$source, 0, 0, 0, 0, 
+			$newsizes[0], 
+			$newsizes[1], 
+			$copysizes[0], 
+			$copysizes[1]
+		);
+		return $res;
 	}
 
     private function createCopy(bool $url = false){
@@ -70,20 +103,20 @@ class Build {
         if(!$url){
             
             switch($this ->source['mime']){
-                case "image/jpeg": $this -> copy =  $this->ext = ".jpg"; break;
-                case "image/png": 
-                    $this -> copy = imagecreatefrompng($this->from);
-                    $this->ext = ".png";
-                    $this->png = true;
-                    break;
-                default: $this -> copy = false;
-            }
-            if(!$this->copy){
-                throw new ImageBuilderException($this->from, 4);
-            }
-            return;
+				case "image/jpeg": $this -> copy =  $this->ext = ".jpg"; break;
+				case "image/png": 
+					$this -> copy = imagecreatefrompng($this->from);
+					$this->ext = ".png";
+					$this->png = true;
+					break;
+				default: $this -> copy = false;
+			}
+			if(!$this->copy){
+				throw new ImageBuilderException($this->from, 4);
+			}
+			return;
 
-        }
+		}
 
         if(($this -> copy = imagecreatefromwebp($this->from)) === false){
             throw new ImageBuilderException($from, 1);

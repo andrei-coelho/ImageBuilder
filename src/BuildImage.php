@@ -63,36 +63,36 @@ use ImageBuilder\Image as Image;
 
         self::$source = $info;
 
-        $res = @imagecreatetruecolor($info[0], $info[1]);
+        // $res = @imagecreatetruecolor($info[0], $info[1]);
 
-        if(gettype($res) !== 'resource') throw new ImageBuilderException(0, $from);
+        //if(gettype($res) !== 'resource') throw new ImageBuilderException(0, $from);
 
-        $this -> copy = new Image($res, self::read_path($from, self::generate_mime($info['mime']))); 
+        $this -> copy = new Image(self::read_path($from, self::generate_mime($info['mime'])), [$info[0], $info[1]]);
         $this -> images[$alias] = Clone $this -> copy;
 
         return $this;
     }
 
 
-    /**
-     * Create a new instance of BuildImage
-     *
-     * @param  string  $from
-     * @param  array   $alias
-     * @return BuildImage
-     */
+	/**
+	* Create a new instance of BuildImage
+	*
+	* @param  string  $from
+	* @param  array   $alias
+	* @return BuildImage
+	*/
     public static function from(string $from, string $alias = null) : BuildImage
     {
     	return $alias ? new BuildImage($from, $alias) : new BuildImage($from);
     }
 
 
-    /**
-     * Create more copies 
-     *
-     * @param  mixed (array or integer)  $argument
-     * @return this   object
-     */
+	/**
+	* Create more copies 
+	*
+	* @param  mixed (array or integer)  $argument
+	* @return this   object
+	*/
     public function copies($argument)
     {	
     	# if argument is integer, create new copies with number sent
@@ -112,12 +112,12 @@ use ImageBuilder\Image as Image;
     }
 
 
-    /**
-     * Create more single copy 
-     *
-     * @param  string   $alias
-     * @return this     object
-     */
+	/**
+	* Create more single copy 
+	*
+	* @param  string   $alias
+	* @return this     object
+	*/
     public function copy(string $alias = null)
     {
     	$alias ? $this -> images[$alias] = $this -> copy : $this -> images[] = $this -> copy;
@@ -125,12 +125,12 @@ use ImageBuilder\Image as Image;
     }
 
 
-    /**
-     * Set new size of all Images 
-     *
-     * @param  string   $size
-     * @return this     object
-     */
+	/**
+	* Set new size of all Images 
+	*
+	* @param  string   $size
+	* @return this     object
+	*/
     public function resize(string $size)
     {	
     	foreach ($this->images as $img)
@@ -150,12 +150,12 @@ use ImageBuilder\Image as Image;
     }
 
     
- 	/**
-     * Change the path where the images will be saved
-     *
-     * @param  string   $size
-     * @return this     object
-     */
+	/**
+	* Change the path where the images will be saved
+	*
+	* @param  string   $size
+	* @return this     object
+	*/
     public function path_as(string $path)
     {
     	foreach ($this->images as $img)
@@ -173,12 +173,12 @@ use ImageBuilder\Image as Image;
 
 
     /**
-     * Use this method for change especific Images
-     *
-     * @param  string   $method
-     * @param  array    $vars
-     * @return this     object
-     */
+	* Use this method for change especific Images
+	*
+	* @param  string   $method
+	* @param  array    $vars
+	* @return this     object
+	*/
     public function each_image(string $method, array $vars)
     {
     	$call = strtolower($method."_image");
@@ -195,16 +195,12 @@ use ImageBuilder\Image as Image;
 
     public function save()
     {
-
-    	$from = $this -> copy -> getFrom();
-    	$mime = $this -> copy -> getMime();
-
-    	foreach ($this -> images as $image)
+    	foreach ($this -> images as $alias => $image)
     	{
     		Build::image(
     			$image, 
-    			$from,
-    			$mime
+				$this -> copy,
+				$alias
     		);
     		$image -> done();
     	}
@@ -212,12 +208,12 @@ use ImageBuilder\Image as Image;
     	# close all resources
     }
 
-    public function getClones()
+	public function getClones()
     {
     	return $this -> images;
     }
 
-    /*                       *
+	/*                       *
 	*------------------------*
 	*       AUX METHODS      *
 	*------------------------*
@@ -238,7 +234,7 @@ use ImageBuilder\Image as Image;
 
 	}
 
-    private static function is_not_size(string $size)
+	private static function is_not_size(string $size)
     {
     	return !preg_match('/((^\d{2,}x\d{2,}$)|(^\*x\d{2,}$)|(^\d{2,}x\*$))/i', trim($size));
     }
@@ -276,13 +272,13 @@ use ImageBuilder\Image as Image;
     private static function generate_mime($type)
     {
     	switch($type){
-	   		case "image/jpeg":
-	   		case "image/jpg":
-	   			return "jpg";
-	   		case "image/png":
-	   			return "png";
-	   		default: return "jpg";
-	  	}
+			case "image/jpeg":
+			case "image/jpg":
+				return "jpg";
+			case "image/png":
+				return "png";
+			default: return "jpg";
+		}
     }
 
- }
+}

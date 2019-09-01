@@ -14,10 +14,6 @@ spl_autoload_register(function($name) {
 
 	$file = __DIR__.DIRECTORY_SEPARATOR."src".DIRECTORY_SEPARATOR.$nameFile.".php";
 
-    $file = $name == 'BuildImage' 
-    ? __DIR__.DIRECTORY_SEPARATOR."src".DIRECTORY_SEPARATOR.$name. ".php"
-    : __DIR__.DIRECTORY_SEPARATOR.$name. ".php";
-
     if (file_exists($file) && is_readable($file)) {
         include $file;
         return;
