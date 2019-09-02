@@ -12,7 +12,7 @@ namespace ImageBuilder;
 class ImageBuilderException extends \Exception {
 
     public function __construct(int $code, string $msg = null){
-        parent::__construct($this -> generateMessage($msg, $code), $code);
+        parent::__construct($this -> generateMessage($code, $msg), $code);
     }
 
     private function generateMessage(int $code, string $msg){

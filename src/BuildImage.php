@@ -35,14 +35,6 @@ use ImageBuilder\Image as Image;
  	private $images = [];
 
 	/**
-	* Here are the copied image sizes from $from
-    *
-	* @var array
-	*
-	*/
-	private static $source;
-
-	/**
 	* Is used to create other new Images
     *
 	* @var string
@@ -63,10 +55,6 @@ use ImageBuilder\Image as Image;
     	if (!extension_loaded('gd'))
             throw new ImageBuilderException(0, $from);
 
-        if (!(@$info = getimagesize($from)))
-			throw new ImageBuilderException(1, $from);
-			
-		self::$source = $info;
 		$this -> from = $from;
 		$this -> images[$alias] = self::create_image($from);
 
@@ -122,22 +110,48 @@ use ImageBuilder\Image as Image;
 	*/
     public function resize(string $size)
     {	
+		if(!self::is_size_values($size)) throw new ImageBuilderException(3, $size);
+
     	foreach ($this->images as $img)
-    		$this -> resize_image($img, $size);
+    		$this -> resize_image($img, $size, true);
 
     	return $this;
     }
 
 
-    private function resize_image(Image $image, $size)
-    {
-    	if(self::is_not_size($size)) throw new ImageBuilderException(3, $size);
-
-    	$vars = self::generate_width_height(explode("x", strtolower($size)));
-
-    	$image -> resize($vars[1], $vars[2]);
+    private function resize_image(Image $image, $size, $type = false)
+    {	
+		if(!$type)
+		if(!self::is_size_values($size)) throw new ImageBuilderException(3, $size);
+		
+    	$image -> resize($size);
     }
 
+
+	/**
+	* Set crop of all Images 
+	*
+	* @param  mix      $values
+	* @return this     object
+	*/
+    public function crop($values)
+    {	
+		if(!self::is_crop_values($values)) throw new ImageBuilderException(3, $values);
+
+    	foreach ($this->images as $img)
+    		$this -> crop_image($img, $values, true);
+
+    	return $this;
+    }
+
+
+    private function crop_image(Image $image, $values, $type = false)
+    {	
+		if(!$type)
+    	if(!self::is_crop_values($values)) throw new ImageBuilderException(3, $values);
+
+    	$image -> crop($values);
+    }
     
 	/**
 	* Change the path where the images will be saved
@@ -168,7 +182,7 @@ use ImageBuilder\Image as Image;
 	* @param  array    $vars
 	* @return this     object
 	*/
-    public function each_image(string $method, array $vars)
+    public function for_image(string $method, array $vars)
     {
     	$call = strtolower($method."_image");
 
@@ -188,7 +202,6 @@ use ImageBuilder\Image as Image;
     	{
     		Build::image(
     			$image, 
-				self::$source,
 				$alias
     		);
     	}
@@ -204,7 +217,9 @@ use ImageBuilder\Image as Image;
 
 	private static function create_image(string $from)
 	{
-		$info = self::$source;
+		if (!(@$info = getimagesize($from)))
+			throw new ImageBuilderException(1, $from);
+
 		$mime = self::generate_mime($info['mime']);
 
         return new Image(self::create_resource($from, $mime), self::read_path($from, $mime), [$info[0], $info[1]]);
@@ -235,19 +250,25 @@ use ImageBuilder\Image as Image;
 
 		$vars = explode('/', $result[0]);
 		$full = array_pop($vars);
-		$temp = explode('.', $full);
-		$name = $temp[0];
-		$mime = $mi === false ? $temp[1] : $mi;
+		$name = substr($full, 0, -4);
+		$mime = $mi === false ? @end(explode('.', $full)) : $mi;
 		$path = implode('/', $vars).'/';
 	
 		return [$path, $name, $mime];
 
 	}
 
-	private static function is_not_size(string $size)
+	private static function is_size_values(string $size)
     {
-    	return !preg_match('/((^\d{2,}x\d{2,}$)|(^\*x\d{2,}$)|(^\d{2,}x\*$))/i', trim($size));
+		return preg_match('/((^\d{2,}x\d{2,}$)|
+		(^\*x\d{2,}$)|(^\d{2,}x\*$)|(^\_x\d{2,}$)|
+		(^\d{2,}x\_$))/i', trim($size));
     }
+
+	private static function is_crop_values(string $info)
+	{
+		return preg_match('/(center|left|right|top|bottom|\d{2,})\s(center|left|right|top|bottom|\d{2,})\s((\d{2,}x\d{2,})|(\*x\d{2,})|(\d{2,}x\*)|(\_x\d{2,})|(\d{2,}x\_))/', trim($info));
+	}
 
     private static function is_url(string $from)
     {
@@ -256,27 +277,6 @@ use ImageBuilder\Image as Image;
         www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|
         https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|
         www\.[a-zA-Z0-9]+\.[^\s]{2,})/', $from);
-    }
-
-    private static function generate_width_height(array $sizes)
-    {
-        if ($sizes[0] == "*"){
-            $multipl = $sizes[1] / self::$source[1];
-            $h = $sizes[1];
-            $w =  (int)(self::$source[0] * $multipl);
-            $s = "_x".$h;
-        } else 
-        if ($sizes[1] == "*"){
-            $multipl = $sizes[0] / self::$source[0];
-            $w = $sizes[0];
-            $h =  (int)(self::$source[1] * $multipl);
-            $s = $w."x_";
-        } else {
-            $h = $sizes[1];
-            $w = $sizes[0];
-            $s = $w."x".$h;
-        }
-        return [$s,$w,$h];
     }
  	
     private static function generate_mime($type)

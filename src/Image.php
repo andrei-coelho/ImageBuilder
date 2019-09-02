@@ -47,10 +47,13 @@ class Image {
 		$this -> modify = $mod;
 	}
 
-	public function resize(int $width, int $height)
+	public function resize(string $size)
 	{	
-		$this -> sizes = [$width, $height]; 
-		$this -> actions['resize'] = 'resize';
+		$this -> actions['resize'] = $size;
+	}
+
+	public function crop(string $values){
+		$this -> actions['crop'] = $values;
 	}
 
 	public function done()
