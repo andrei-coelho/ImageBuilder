@@ -43,15 +43,20 @@ use ImageBuilder\Image as Image;
 	private static $source;
 
 	/**
-	* This is a default instance of the Image.
 	* Is used to create other new Images
     *
-	* @var Image
+	* @var string
 	*
 	*/
-	private $copy;
+	private $from;
 
-
+	/**
+	* This is a control for alias
+    *
+	* @var boolean
+	*
+	*/
+	private $mod = false;
 
     private function __construct(string $from, $alias = 0)
     {
@@ -59,18 +64,12 @@ use ImageBuilder\Image as Image;
             throw new ImageBuilderException(0, $from);
 
         if (!(@$info = getimagesize($from)))
-            throw new ImageBuilderException(1, $from);
+			throw new ImageBuilderException(1, $from);
+			
+		self::$source = $info;
+		$this -> from = $from;
+		$this -> images[$alias] = self::create_image($from);
 
-        self::$source = $info;
-
-        // $res = @imagecreatetruecolor($info[0], $info[1]);
-
-        //if(gettype($res) !== 'resource') throw new ImageBuilderException(0, $from);
-
-        $this -> copy = new Image(self::read_path($from, self::generate_mime($info['mime'])), [$info[0], $info[1]]);
-        $this -> images[$alias] = Clone $this -> copy;
-
-        return $this;
     }
 
 
@@ -93,34 +92,24 @@ use ImageBuilder\Image as Image;
 	* @param  mixed (array or integer)  $argument
 	* @return this   object
 	*/
-    public function copies($argument)
+    public function copy($argument)
     {	
     	# if argument is integer, create new copies with number sent
-    	if(is_int($argument))
+    	if(is_int($argument) && $argument > 0)
     	{
+			$this -> mod = true;
 	    	for ($i=0; $i < $argument; $i++) 
-	    		$this -> images[] = Clone $this -> copy;
+	    		$this -> images[] = self::create_image($this->from);
     	} 
     	# if the argument is array, create new copies using aliased value
     	else if(is_array($argument))
     	{
     		foreach ($argument as $alias)
-    			if($alias) $this -> images[$alias] = Clone $this -> copy;
+    			if(!is_bool($alias)) {
+					$this -> images[$alias] = self::create_image($this->from);
+				}
     	}
 
-    	return $this;
-    }
-
-
-	/**
-	* Create more single copy 
-	*
-	* @param  string   $alias
-	* @return this     object
-	*/
-    public function copy(string $alias = null)
-    {
-    	$alias ? $this -> images[$alias] = $this -> copy : $this -> images[] = $this -> copy;
     	return $this;
     }
 
@@ -168,7 +157,7 @@ use ImageBuilder\Image as Image;
     {
     	if(!($info = self::read_path($path))) throw new ImageBuilderException(6);
 
-    	$image -> change_info($info);
+    	$image -> change_info($info, !$this -> mod);
     }
 
 
@@ -199,25 +188,44 @@ use ImageBuilder\Image as Image;
     	{
     		Build::image(
     			$image, 
-				$this -> copy,
+				self::$source,
 				$alias
     		);
-    		$image -> done();
     	}
-
-    	# close all resources
+		
     }
 
-	public function getClones()
-    {
-    	return $this -> images;
-    }
 
 	/*                       *
 	*------------------------*
 	*       AUX METHODS      *
 	*------------------------*
 	*                        */
+
+	private static function create_image(string $from)
+	{
+		$info = self::$source;
+		$mime = self::generate_mime($info['mime']);
+
+        return new Image(self::create_resource($from, $mime), self::read_path($from, $mime), [$info[0], $info[1]]);
+	}
+
+	private static function create_resource(string $from, string $mime)
+	{
+		switch ($mime) {
+			case 'jpg':
+				return imagecreatefromjpeg($from);
+
+			case 'png':
+					$res = imagecreatefrompng($from);
+					imagealphablending($res, false);
+					imagesavealpha($res, true);
+				return $res;
+
+			default:
+				return false;
+		}
+	}
 
 	private static function read_path(string $path, $mi = false)
 	{
@@ -226,10 +234,12 @@ use ImageBuilder\Image as Image;
 		if(count($result) == 0) return false;
 
 		$vars = explode('/', $result[0]);
-		$name = array_pop($vars);
-		$mime = $mi === false ? @end(explode('.', $name)) : $mi;
+		$full = array_pop($vars);
+		$temp = explode('.', $full);
+		$name = $temp[0];
+		$mime = $mi === false ? $temp[1] : $mi;
 		$path = implode('/', $vars).'/';
-
+	
 		return [$path, $name, $mime];
 
 	}
@@ -239,7 +249,7 @@ use ImageBuilder\Image as Image;
     	return !preg_match('/((^\d{2,}x\d{2,}$)|(^\*x\d{2,}$)|(^\d{2,}x\*$))/i', trim($size));
     }
 
-    private static function is_url(string $str)
+    private static function is_url(string $from)
     {
         return preg_match('/(https?:\/\/(?:www\.|(?!www))
         [a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|

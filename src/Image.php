@@ -29,21 +29,22 @@ class Image {
 
 	public $sizes = [];
 
-	public function __construct(array $info, array $sizes)
+	public function __construct($resource, array $info, array $sizes)
 	{
-		$this -> path   = $info[0];
-		$this -> name   = $info[1];
-		$this -> mime   = $info[2];
-		$this -> sizes  = $sizes;
+		$this -> resource = $resource;
+		$this -> path     = $info[0];
+		$this -> name     = $info[1];
+		$this -> mime     = $info[2];
+		$this -> sizes    = $sizes;
 	}
 
-	public function change_info(array $info)
+	public function change_info(array $info, bool $mod)
 	{	
 		$this -> path   = $info[0];
 		$this -> name   = $info[1];
 		$this -> mime   = $info[2];
 
-		$this -> modify = true;
+		$this -> modify = $mod;
 	}
 
 	public function resize(int $width, int $height)
