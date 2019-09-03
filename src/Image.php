@@ -3,7 +3,7 @@
 /**
  *
  * @author Andrei Coelho
- * @version 0.1
+ * @version 0.2
  *
  */
 
@@ -47,6 +47,12 @@ class Image {
 		$this -> modify = $mod;
 	}
 
+	/*                       *
+	*------------------------*
+	*    ACTIONS   METHODS   *
+	*------------------------*
+	*                        */
+
 	public function resize(string $size)
 	{	
 		$this -> actions['resize'] = $size;
@@ -56,9 +62,24 @@ class Image {
 		$this -> actions['crop'] = $values;
 	}
 
-	public function done()
-	{
-		# code...
+	/*                       *
+	*------------------------*
+	*     FILTER  METHODS    *
+	*------------------------*
+	*                        */
+
+	public function negate(){
+		$this -> filters['negate'] = true;
 	}
+
+	public function grayscale(){
+		$this -> filters['grayscale'] = true;
+	}
+
+	public function brightness(int $level){
+		$this -> filters['brightness'] = $level;
+	}
+
+
 
 }

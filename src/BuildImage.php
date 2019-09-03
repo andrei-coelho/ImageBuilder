@@ -93,14 +93,53 @@ use ImageBuilder\Image as Image;
     	else if(is_array($argument))
     	{
     		foreach ($argument as $alias)
-    			if(!is_bool($alias)) {
+    			if(!is_bool($alias))
 					$this -> images[$alias] = self::create_image($this->from);
-				}
     	}
 
     	return $this;
     }
 
+
+	/**
+	* Change the path where the images will be saved
+	*
+	* @param  string   $size
+	* @return this     object
+	*/
+    public function path_as(string $path)
+    {
+    	foreach ($this->images as $img)
+    		$this -> path_as_image($img, $path);
+
+    	return $this;
+    }
+
+    private function path_as_image(Image $image, string $path)
+    {
+    	if(!($info = self::read_path($path))) throw new ImageBuilderException(6);
+
+    	$image -> change_info($info, !$this -> mod);
+	}
+	
+	public function save()
+    {
+    	foreach ($this -> images as $alias => $image)
+    	{
+    		Build::image(
+    			$image, 
+				$alias
+    		);
+    	}
+		
+    }
+
+
+	/*                       *
+	*------------------------*
+	*    ACTIONS   METHODS   *
+	*------------------------*
+	*                        */
 
 	/**
 	* Set new size of all Images 
@@ -153,27 +192,7 @@ use ImageBuilder\Image as Image;
     	$image -> crop($values);
     }
     
-	/**
-	* Change the path where the images will be saved
-	*
-	* @param  string   $size
-	* @return this     object
-	*/
-    public function path_as(string $path)
-    {
-    	foreach ($this->images as $img)
-    		$this -> path_as_image($img, $path);
-
-    	return $this;
-    }
-
-    private function path_as_image(Image $image, string $path)
-    {
-    	if(!($info = self::read_path($path))) throw new ImageBuilderException(6);
-
-    	$image -> change_info($info, !$this -> mod);
-    }
-
+	
 
     /**
 	* Use this method for change especific Images
@@ -196,18 +215,76 @@ use ImageBuilder\Image as Image;
 
     }
 
-    public function save()
-    {
-    	foreach ($this -> images as $alias => $image)
-    	{
-    		Build::image(
-    			$image, 
-				$alias
-    		);
-    	}
-		
+
+
+
+	/*                       *
+	*------------------------*
+	*     FILTER  METHODS    *
+	*------------------------*
+	*                        */
+
+	/**
+	* Reverses all colors of the image 
+	*
+	* @return this     object
+	*/
+    public function negate()
+    {	
+    	foreach ($this->images as $img)
+    		$this -> negate_image($img);
+
+    	return $this;
     }
 
+
+    private function negate_image(Image $image)
+    {	
+    	$image -> negate();
+    }
+
+
+	/**
+	* Converts the image into grayscale
+	*
+	* @return this     object
+	*/
+    public function grayscale()
+    {	
+    	foreach ($this->images as $img)
+    		$this -> grayscale_image($img);
+
+    	return $this;
+    }
+
+
+    private function grayscale_image(Image $image)
+    {	
+    	$image -> grayscale();
+	}
+
+	
+	/**
+	* Changes the brightness of the image
+	*
+	* @return this     object
+	*/
+    public function brightness(int $level)
+    {	
+    	foreach ($this->images as $img)
+    		$this -> brightness_image($img, $level);
+
+    	return $this;
+    }
+
+
+    private function brightness_image(Image $image, int $level)
+    {	
+    	$image -> brightness($level);
+    }
+
+
+	
 
 	/*                       *
 	*------------------------*
@@ -267,7 +344,8 @@ use ImageBuilder\Image as Image;
 
 	private static function is_crop_values(string $info)
 	{
-		return preg_match('/(center|left|right|top|bottom|\d{2,})\s(center|left|right|top|bottom|\d{2,})\s((\d{2,}x\d{2,})|(\*x\d{2,})|(\d{2,}x\*)|(\_x\d{2,})|(\d{2,}x\_))/', trim($info));
+		return preg_match('/(center|left|right|top|bottom|\d{2,})\s(center|left|right|top|bottom|\d{2,})\s(
+			(\d{2,}x\d{2,})|(\*x\d{2,})|(\d{2,}x\*)|(\_x\d{2,})|(\d{2,}x\_))/', trim($info));
 	}
 
     private static function is_url(string $from)

@@ -16,12 +16,12 @@ class Build {
 	{
 
 		# actions... here we go!
-		foreach ($image -> actions as $action => $value)
-			$image -> resource = self::$action($image, $value);
+		foreach ($image -> actions as $action => $val1)
+			$image -> resource = self::$action($image, $val1);
 
    		# filters... it's your turn!
-   		foreach ($image -> filters as $filter => $values)
-			self::$filter();
+		foreach ($image -> filters as $filter => $val2)
+			self::$filter($image, $val2);
 		
 		# save Image now!
 		$suffixed = $image -> modify ? "" : "_".$alias; 
@@ -80,7 +80,7 @@ class Build {
 		
 	}
 
-	public function crop(Image $image, string $cropsizes)
+	public static function crop(Image $image, string $cropsizes)
 	{
 	
 		$values = self::generate_values_crop($cropsizes, $image -> sizes);
@@ -103,6 +103,35 @@ class Build {
 		$image -> sizes = [$values[2], $values[3]];
 		return $res;
 	}
+
+
+	/*                       *
+	*------------------------*
+	*     FILTER  METHODS    *
+	*------------------------*
+	*                        */
+
+	private static function grayscale(Image $image)
+	{
+		imagefilter($image -> resource, IMG_FILTER_GRAYSCALE);
+	}
+
+	private static function negate(Image $image)
+	{
+		imagefilter($image -> resource, IMG_FILTER_NEGATE);
+	}
+
+	private static function brightness(Image $image, int $level)
+	{
+		imagefilter($image -> resource, IMG_FILTER_BRIGHTNESS, $level);
+	}
+
+
+	/*                       *
+	*------------------------*
+	*       AUX METHODS      *
+	*------------------------*
+	*                        */
 
 	private static function isPng(Image $image)
 	{
