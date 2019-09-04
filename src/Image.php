@@ -62,6 +62,10 @@ class Image {
 		$this -> actions['crop'] = $values;
 	}
 
+	public function flip(string $flip){
+		$this -> actions['flip'] = $flip;
+	}
+
 	/*                       *
 	*------------------------*
 	*     FILTER  METHODS    *

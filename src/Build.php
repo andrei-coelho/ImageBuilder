@@ -104,6 +104,23 @@ class Build {
 		return $res;
 	}
 
+	private static function flip(Image $image, string $type)
+	{
+		switch ($type) {
+			case 'horizontal':
+				$const = IMG_FLIP_HORIZONTAL;
+				break;
+			case 'vertical':
+				$const = IMG_FLIP_VERTICAL;
+				break;
+			default:
+				$const = IMG_FLIP_BOTH;
+				break;
+		}
+
+		imageflip($image -> resource, $const);
+		return $image -> resource;
+	}
 
 	/*                       *
 	*------------------------*
@@ -141,7 +158,6 @@ class Build {
 	private static function generate_width_height_resize(string $sizes, array $source)
     {
 		$sizes = explode('x', $sizes);
-	
         if ($sizes[0] == "*"){
             $multipl = $sizes[1] / $source[1];
             $h = $sizes[1];

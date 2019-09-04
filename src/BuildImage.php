@@ -50,6 +50,9 @@ use ImageBuilder\Image as Image;
 	*/
 	private $mod = false;
 
+
+
+
     private function __construct(string $from, $alias = 0)
     {
     	if (!extension_loaded('gd'))
@@ -82,10 +85,10 @@ use ImageBuilder\Image as Image;
 	*/
     public function copy($argument)
     {	
+		$this -> mod = true;
     	# if argument is integer, create new copies with number sent
     	if(is_int($argument) && $argument > 0)
     	{
-			$this -> mod = true;
 	    	for ($i=0; $i < $argument; $i++) 
 	    		$this -> images[] = self::create_image($this->from);
     	} 
@@ -107,19 +110,29 @@ use ImageBuilder\Image as Image;
 	* @param  string   $size
 	* @return this     object
 	*/
-    public function path_as(string $path)
+    public function path(string $path)
     {
-    	foreach ($this->images as $img)
-    		$this -> path_as_image($img, $path);
+    	foreach ($this->images as $img){
+
+			if(!($info = self::read_path($path))) throw new ImageBuilderException(6);
+			
+			$img -> change_info($info, !$this -> mod);
+
+		}
 
     	return $this;
     }
 
-    private function path_as_image(Image $image, string $path)
-    {
-    	if(!($info = self::read_path($path))) throw new ImageBuilderException(6);
+    private function path_image(array $values)
+    {	
+		foreach ($values as $alias => $value) {
+			
+			if(!($info = self::read_path($path))) throw new ImageBuilderException(6);
+			
+			if(isset($this->images[$alias])) 
+				$this->images[$alias] -> change_info($info, !$this -> mod);
 
-    	$image -> change_info($info, !$this -> mod);
+		}	
 	}
 	
 	public function save()
@@ -145,77 +158,118 @@ use ImageBuilder\Image as Image;
 	* Set new size of all Images 
 	*
 	* @param  string   $size
+	* @param  string   $alias
 	* @return this     object
 	*/
-    public function resize(string $size)
+    public function resize(string $size, $alias = false)
     {	
 		if(!self::is_size_values($size)) throw new ImageBuilderException(3, $size);
 
-    	foreach ($this->images as $img)
-    		$this -> resize_image($img, $size, true);
-
-    	return $this;
-    }
-
-
-    private function resize_image(Image $image, $size, $type = false)
-    {	
-		if(!$type)
-		if(!self::is_size_values($size)) throw new ImageBuilderException(3, $size);
+		if($alias){
+			$this->images[$alias] -> resize($size);
+			return $this;
+		}
+		foreach ($this->images as $image)
+			$image -> resize($size);
 		
-    	$image -> resize($size);
+		return $this;
     }
 
+
+    private function resize_image(array $values)
+    {	
+		foreach ($values as $alias => $value) {
+			
+			if(!self::is_size_values($values)) throw new ImageBuilderException(3, $values);
+			
+			if(isset($this->images[$alias])) 
+				$this->images[$alias] -> resize($value);
+		}	
+    }
+	
 
 	/**
 	* Set crop of all Images 
 	*
 	* @param  mix      $values
+	* @param  mix      $alias
 	* @return this     object
 	*/
-    public function crop($values)
+    public function crop($values, $alias = false)
     {	
 		if(!self::is_crop_values($values)) throw new ImageBuilderException(3, $values);
 
-    	foreach ($this->images as $img)
-    		$this -> crop_image($img, $values, true);
-
-    	return $this;
+		if($alias){
+			$this->images[$alias] -> crop($values);
+			return $this;
+		}
+		foreach ($this->images as $image)
+			$image -> crop($values);
+		
+		return $this;
     }
 
 
-    private function crop_image(Image $image, $values, $type = false)
+    private function crop_image(array $values)
     {	
-		if(!$type)
-    	if(!self::is_crop_values($values)) throw new ImageBuilderException(3, $values);
+		foreach ($values as $alias => $value) {
 
-    	$image -> crop($values);
+			if(!self::is_crop_values($values)) throw new ImageBuilderException(3, $values);
+			
+			if(isset($this->images[$alias])) 
+				$this->images[$alias] -> crop($value);
+		}
     }
-    
+	
+
+	/**
+	* Flip all Images 
+	*
+	* @param  string   $size
+	* @return this     object
+	*/
+    public function flip(string $flip, $alias = false)
+    {	
+		if($alias){
+			$this->images[$alias] -> flip($flip);
+			return $this;
+		}
+		foreach ($this->images as $image)
+			$image -> flip($flip);
+		
+		return $this;
+    }
+
+
+    private function flip_image(array $values)
+    {	
+		foreach ($values as $alias => $value) {
+
+			if(isset($this->images[$alias])) 
+				$this->images[$alias] -> flip($value);
+		}
+    }
 	
 
     /**
-	* Use this method for change especific Images
+	* Use this method for change especifics Images
 	*
 	* @param  string   $method
 	* @param  array    $vars
 	* @return this     object
 	*/
-    public function for_image(string $method, array $vars)
+    public function use(string $method, array $vars)
     {
     	$call = strtolower($method."_image");
 
     	if(!method_exists($this, $call)) throw new Exception($method, 6);
-    	
-    	foreach ($vars as $key => $value)
-    		if(isset($this -> images[$key]) && is_string($value))
-    			$this -> $call($this -> images[$key], $value);
+		
+		$this -> $call($vars);
 
     	return $this;
-
     }
 
-
+	
 
 
 	/*                       *
@@ -229,18 +283,26 @@ use ImageBuilder\Image as Image;
 	*
 	* @return this     object
 	*/
-    public function negate()
+    public function negate($alias = false)
     {	
+		if($alias){
+			$this->images[$alias] -> negate();
+			return $this;
+		}
     	foreach ($this->images as $img)
-    		$this -> negate_image($img);
+			$img -> negate();
 
     	return $this;
     }
 
 
-    private function negate_image(Image $image)
+    private function negate_image(array $values)
     {	
-    	$image -> negate();
+		foreach ($values as $alias => $value) {
+
+			if(isset($this->images[$alias])) 
+				$this->images[$alias] -> negate();
+		}
     }
 
 
@@ -252,15 +314,19 @@ use ImageBuilder\Image as Image;
     public function grayscale()
     {	
     	foreach ($this->images as $img)
-    		$this -> grayscale_image($img);
+			$img -> grayscale();
 
     	return $this;
     }
 
 
-    private function grayscale_image(Image $image)
+    private function grayscale_image(array $values)
     {	
-    	$image -> grayscale();
+    	foreach ($values as $alias => $value) {
+			
+			if(isset($this->images[$alias])) 
+				$this->images[$alias] -> grayscale();
+		}
 	}
 
 	
@@ -269,18 +335,26 @@ use ImageBuilder\Image as Image;
 	*
 	* @return this     object
 	*/
-    public function brightness(int $level)
+    public function brightness(int $level, $alias = false)
     {	
+		if($alias){
+			$this->images[$alias] -> brightness($level);
+			return $this;
+		}
     	foreach ($this->images as $img)
-    		$this -> brightness_image($img, $level);
+			$img -> brightness($level);
 
     	return $this;
     }
 
 
-    private function brightness_image(Image $image, int $level)
+    private function brightness_image(array $values)
     {	
-    	$image -> brightness($level);
+    	foreach ($values as $alias => $value) {
+			
+			if(isset($this->images[$alias])) 
+				$this->images[$alias] -> brightness($value);
+		}
     }
 
 
@@ -337,24 +411,17 @@ use ImageBuilder\Image as Image;
 
 	private static function is_size_values(string $size)
     {
-		return preg_match('/((^\d{2,}x\d{2,}$)|
-		(^\*x\d{2,}$)|(^\d{2,}x\*$)|(^\_x\d{2,}$)|
-		(^\d{2,}x\_$))/i', trim($size));
+		return preg_match('/((^\d{2,}x\d{2,}$)|(^\*x\d{2,}$)|(^\d{2,}x\*$)|(^\_x\d{2,}$)|(^\d{2,}x\_$))/i', trim($size));
     }
 
 	private static function is_crop_values(string $info)
 	{
-		return preg_match('/(center|left|right|top|bottom|\d{2,})\s(center|left|right|top|bottom|\d{2,})\s(
-			(\d{2,}x\d{2,})|(\*x\d{2,})|(\d{2,}x\*)|(\_x\d{2,})|(\d{2,}x\_))/', trim($info));
+		return preg_match('/(center|left|right|top|bottom|\d{2,})\s(center|left|right|top|bottom|\d{2,})\s((\d{2,}x\d{2,})|(\*x\d{2,})|(\d{2,}x\*)|(\_x\d{2,})|(\d{2,}x\_))/', trim($info));
 	}
 
     private static function is_url(string $from)
     {
-        return preg_match('/(https?:\/\/(?:www\.|(?!www))
-        [a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|
-        www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|
-        https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|
-        www\.[a-zA-Z0-9]+\.[^\s]{2,})/', $from);
+        return preg_match('/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/', $from);
     }
  	
     private static function generate_mime($type)
