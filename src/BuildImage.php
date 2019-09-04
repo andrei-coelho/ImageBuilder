@@ -182,7 +182,7 @@ class BuildImage {
 	{	
 		foreach ($values as $alias => $value) {
 			
-			if(!self::is_size_values($values)) throw new ImageBuilderException(3, $values);
+			if(!self::is_size_values($value)) throw new ImageBuilderException(3, $value);
 			
 			if(isset($this->images[$alias])) 
 				$this->images[$alias] -> resize($value);
@@ -313,8 +313,12 @@ class BuildImage {
 	*
 	* @return this     object
 	*/
-	public function grayscale()
+	public function grayscale($alias = false)
 	{	
+		if($alias){
+			$this->images[$alias] -> grayscale();
+			return $this;
+		}
 		foreach ($this->images as $img)
 			$img -> grayscale();
 
