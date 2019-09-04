@@ -17,6 +17,8 @@
 |                                                                          |
 |--------------------------------------------------------------------------*/
 
+
+
 namespace ImageBuilder;
 
 use ImageBuilder\ImageBuilderException as ImageBuilderException;
@@ -52,7 +54,7 @@ class BuildImage {
 
 
 
-
+	# constructor
 	private function __construct(string $from, $alias = 0)
 	{
 		if (!extension_loaded('gd'))

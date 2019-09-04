@@ -8,20 +8,39 @@
  */
 
 
-namespace ImageBuilder;
+
+/*-------------------------------------------------------------------------|
+|                              	  Image                                    |
+|--------------------------------------------------------------------------|
+|                                                                          |
+|       This class is a template of how the file will be generated!        |
+|All information to generate the file is contained in objects of this class|
+|                                                                          |
+|--------------------------------------------------------------------------*/
+
+
+namespace ImageBuilder;	
 
 use ImageBuilder\ImageBuilderException as ImageBuilderException;
 
+
 class Image {
 
+	/**
+	* The resource of GD Image used by Build
+	*
+	* @var resource $resource
+	*
+	*/
 	public $resource;
-	public $actions = [];
-	public $filters = [];
+
+	public $actions = []; # all action methods are saves here
+	public $filters = []; # all filter methods are saves here
 	public $modify  = false;
 	
 	/**
 	* The informations of Image
-    *
+	*
 	* @var string $path, $name, $mime
 	*
 	*/
@@ -58,11 +77,13 @@ class Image {
 		$this -> actions['resize'] = $size;
 	}
 
-	public function crop(string $values){
+	public function crop(string $values)
+	{
 		$this -> actions['crop'] = $values;
 	}
 
-	public function flip(string $flip){
+	public function flip(string $flip)
+	{
 		$this -> actions['flip'] = $flip;
 	}
 

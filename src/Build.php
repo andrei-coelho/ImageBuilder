@@ -1,9 +1,23 @@
 <?php 
 
 /**
+ * 
  * @author Andrei Coelho
  * @version 0.1
+ * 
  */
+
+
+
+/*-------------------------------------------------------------------------|
+|                              	  Build                                    |
+|--------------------------------------------------------------------------|
+|                                                                          |
+|                 This class generates the image files!                    |
+|                                                                          |
+|--------------------------------------------------------------------------*/
+
+
 
 namespace ImageBuilder;
 
@@ -51,7 +65,7 @@ class Build {
    
 	/*                       *
 	*------------------------*
-	*         ACTIONS        *
+	*     ACTIONS METHODS    *
 	*------------------------*
 	*                        */
 
@@ -63,7 +77,7 @@ class Build {
 		$res = imagecreatetruecolor($sizes[0], $sizes[1]);
 		if(self::isPng($image)) {
 			imagealphablending($res, false);
-            imagesavealpha($res, true);
+			imagesavealpha($res, true);
 		}
 
 		imagecopyresized(
@@ -88,7 +102,7 @@ class Build {
 		$res = imagecreatetruecolor($values[2], $values[3]);
 		if(self::isPng($image)) {
 			imagealphablending($res, false);
-            imagesavealpha($res, true);
+			imagesavealpha($res, true);
 		}
 
 		imagecopyresampled(
@@ -156,17 +170,17 @@ class Build {
 	}
 
 	private static function generate_width_height_resize(string $sizes, array $source)
-    {
+	{
 		$sizes = explode('x', $sizes);
-        if ($sizes[0] == "*"){
-            $multipl = $sizes[1] / $source[1];
-            $h = $sizes[1];
-            $w =  (int)($source[0] * $multipl);
-        } else 
-        if ($sizes[1] == "*"){
-            $multipl = $sizes[0] / $source[0];
-            $w = $sizes[0];
-            $h =  (int)($source[1] * $multipl);
+		if ($sizes[0] == "*"){
+			$multipl = $sizes[1] / $source[1];
+			$h = $sizes[1];
+			$w =  (int)($source[0] * $multipl);
+		} else 
+		if ($sizes[1] == "*"){
+			$multipl = $sizes[0] / $source[0];
+			$w = $sizes[0];
+			$h =  (int)($source[1] * $multipl);
 		} else 
 		if($sizes[0] == "_"){
 			$h = $sizes[1];
@@ -177,10 +191,10 @@ class Build {
 			$w = $sizes[0];
 		} 
 		else {
-            $h = $sizes[1];
-            $w = $sizes[0];
-        }
-        return [$w,$h];
+			$h = $sizes[1];
+			$w = $sizes[0];
+		}
+		return [$w,$h];
 	}
 	
 	private static function generate_values_crop(string $info, array $source)
