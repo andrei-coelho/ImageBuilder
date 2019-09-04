@@ -58,8 +58,8 @@ class BuildImage {
 		if (!extension_loaded('gd'))
 			throw new ImageBuilderException(0, $from);
 
-			$this -> from = $from;
-			$this -> images[$alias] = self::create_image($from);
+		$this -> from = $from;
+		$this -> images[$alias] = self::create_image($from);
 	}
 
 
@@ -85,21 +85,22 @@ class BuildImage {
 	public function copy($argument)
 	{	
 		$this -> mod = true;
-			# if argument is integer, create new copies with number sent
-			if(is_int($argument) && $argument > 0)
-			{
-				for ($i=0; $i < $argument; $i++) 
-					$this -> images[] = self::create_image($this->from);
-			} 
-			# if the argument is array, create new copies using aliased value
-			else if(is_array($argument))
-			{
-				foreach ($argument as $alias)
-					if(!is_bool($alias))
-					$this -> images[$alias] = self::create_image($this->from);
-			}
 
-			return $this;
+		# if argument is integer, create new copies with number sent
+		if(is_int($argument) && $argument > 0)
+		{
+			for ($i=0; $i < $argument; $i++) 
+				$this -> images[] = self::create_image($this->from);
+		} 
+		# if the argument is array, create new copies using aliased value
+		else if(is_array($argument))
+		{
+			foreach ($argument as $alias)
+				if(!is_bool($alias))
+				$this -> images[$alias] = self::create_image($this->from);
+		}
+
+		return $this;
 	}
 
 
@@ -140,7 +141,7 @@ class BuildImage {
 		{
 			Build::image(
 				$image, 
-			$alias
+				$alias
 			);
 		}
 		
@@ -250,7 +251,7 @@ class BuildImage {
 	}
 
 
-		/**
+	/**
 	* Use this method for change especifics Images
 	*
 	* @param  string   $method
@@ -313,7 +314,7 @@ class BuildImage {
 	public function grayscale()
 	{	
 		foreach ($this->images as $img)
-		$img -> grayscale();
+			$img -> grayscale();
 
 		return $this;
 	}
@@ -321,7 +322,7 @@ class BuildImage {
 
 	private function grayscale_image(array $values)
 	{	
-			foreach ($values as $alias => $value) {
+		foreach ($values as $alias => $value) {
 			
 			if(isset($this->images[$alias])) 
 				$this->images[$alias] -> grayscale();
