@@ -23,20 +23,20 @@ use ImageBuilder\ImageBuilderException as ImageBuilderException;
 use ImageBuilder\Build as Build;
 use ImageBuilder\Image as Image;
 
- class BuildImage {
+class BuildImage {
 
 
 	/**
 	* The list os Image instances 
-    	*
+	*
 	* @var array
 	*
 	*/
- 	private $images = [];
+	private $images = [];
 
 	/**
 	* Is used to create other new Images
-   	*
+	*
 	* @var string
 	*
 	*/
@@ -44,7 +44,7 @@ use ImageBuilder\Image as Image;
 
 	/**
 	* This is a control for alias
-   	*
+	*
 	* @var boolean
 	*
 	*/
@@ -56,7 +56,7 @@ use ImageBuilder\Image as Image;
 	private function __construct(string $from, $alias = 0)
 	{
 		if (!extension_loaded('gd'))
-		   	throw new ImageBuilderException(0, $from);
+			throw new ImageBuilderException(0, $from);
 
 			$this -> from = $from;
 			$this -> images[$alias] = self::create_image($from);
@@ -122,8 +122,8 @@ use ImageBuilder\Image as Image;
 		return $this;
 	}
 
-   	private function path_image(array $values)
-    {	
+	private function path_image(array $values)
+	{	
 		foreach ($values as $alias => $value) {
 			
 			if(!($info = self::read_path($path))) throw new ImageBuilderException(6);
@@ -133,9 +133,9 @@ use ImageBuilder\Image as Image;
 
 		}	
 	}
-	
+
 	public function save()
-    {
+	{
 		foreach ($this -> images as $alias => $image)
 		{
 			Build::image(
@@ -144,7 +144,7 @@ use ImageBuilder\Image as Image;
 			);
 		}
 		
-   	}
+	}
 
 
 	/*                       *
@@ -160,8 +160,8 @@ use ImageBuilder\Image as Image;
 	* @param  string   $alias
 	* @return this     object
 	*/
-    public function resize(string $size, $alias = false)
-    {	
+	public function resize(string $size, $alias = false)
+	{	
 		if(!self::is_size_values($size)) throw new ImageBuilderException(3, $size);
 
 		if($alias){
@@ -172,11 +172,11 @@ use ImageBuilder\Image as Image;
 			$image -> resize($size);
 		
 		return $this;
-    }
+	}
 
 
-    private function resize_image(array $values)
-    {	
+	private function resize_image(array $values)
+	{	
 		foreach ($values as $alias => $value) {
 			
 			if(!self::is_size_values($values)) throw new ImageBuilderException(3, $values);
@@ -184,8 +184,8 @@ use ImageBuilder\Image as Image;
 			if(isset($this->images[$alias])) 
 				$this->images[$alias] -> resize($value);
 		}	
-   	}
-	
+	}
+
 
 	/**
 	* Set crop of all Images 
@@ -194,8 +194,8 @@ use ImageBuilder\Image as Image;
 	* @param  mix      $alias
 	* @return this     object
 	*/
-   	public function crop($values, $alias = false)
-    {	
+	public function crop($values, $alias = false)
+	{	
 		if(!self::is_crop_values($values)) throw new ImageBuilderException(3, $values);
 
 		if($alias){
@@ -206,11 +206,11 @@ use ImageBuilder\Image as Image;
 			$image -> crop($values);
 		
 		return $this;
-    }
+	}
 
 
-    private function crop_image(array $values)
-    {	
+	private function crop_image(array $values)
+	{	
 		foreach ($values as $alias => $value) {
 
 			if(!self::is_crop_values($values)) throw new ImageBuilderException(3, $values);
@@ -218,8 +218,8 @@ use ImageBuilder\Image as Image;
 			if(isset($this->images[$alias])) 
 				$this->images[$alias] -> crop($value);
 		}
-    }
-	
+	}
+
 
 	/**
 	* Flip all Images 
@@ -227,8 +227,8 @@ use ImageBuilder\Image as Image;
 	* @param  string   $size
 	* @return this     object
 	*/
-    public function flip(string $flip, $alias = false)
-    {	
+	public function flip(string $flip, $alias = false)
+	{	
 		if($alias){
 			$this->images[$alias] -> flip($flip);
 			return $this;
@@ -237,38 +237,38 @@ use ImageBuilder\Image as Image;
 			$image -> flip($flip);
 		
 		return $this;
-    }
+	}
 
 
-    private function flip_image(array $values)
-    {	
+	private function flip_image(array $values)
+	{	
 		foreach ($values as $alias => $value) {
 
 			if(isset($this->images[$alias])) 
 				$this->images[$alias] -> flip($value);
 		}
-    }
-	
+	}
 
-    	/**
+
+		/**
 	* Use this method for change especifics Images
 	*
 	* @param  string   $method
 	* @param  array    $vars
 	* @return this     object
 	*/
-    public function use(string $method, array $vars)
-    {
-    		$call = strtolower($method."_image");
+	public function use(string $method, array $vars)
+	{
+		$call = strtolower($method."_image");
 
-    		if(!method_exists($this, $call)) throw new Exception($method, 6);
-		
+		if(!method_exists($this, $call)) throw new Exception($method, 6);
+
 		$this -> $call($vars);
 
-    		return $this;
-    }
+		return $this;
+	}
 
-	
+
 
 
 	/*                       *
@@ -282,27 +282,27 @@ use ImageBuilder\Image as Image;
 	*
 	* @return this     object
 	*/
-    public function negate($alias = false)
-    {	
+	public function negate($alias = false)
+	{	
 		if($alias){
 			$this->images[$alias] -> negate();
 			return $this;
 		}
-    		foreach ($this->images as $img)
+		foreach ($this->images as $img)
 			$img -> negate();
 
-    		return $this;
-    }
+		return $this;
+	}
 
 
-    private function negate_image(array $values)
-    {	
+	private function negate_image(array $values)
+	{	
 		foreach ($values as $alias => $value) {
 
 			if(isset($this->images[$alias])) 
 				$this->images[$alias] -> negate();
 		}
-    }
+	}
 
 
 	/**
@@ -319,45 +319,45 @@ use ImageBuilder\Image as Image;
 	}
 
 
-    private function grayscale_image(array $values)
-    {	
-    		foreach ($values as $alias => $value) {
+	private function grayscale_image(array $values)
+	{	
+			foreach ($values as $alias => $value) {
 			
 			if(isset($this->images[$alias])) 
 				$this->images[$alias] -> grayscale();
 		}
 	}
 
-	
+
 	/**
 	* Changes the brightness of the image
 	*
 	* @return this     object
 	*/
-    public function brightness(int $level, $alias = false)
-    {	
+	public function brightness(int $level, $alias = false)
+	{	
 		if($alias){
 			$this->images[$alias] -> brightness($level);
 			return $this;
 		}
-    		foreach ($this->images as $img)
+		foreach ($this->images as $img)
 			$img -> brightness($level);
 
-    		return $this;
-    }
+		return $this;
+	}
 
 
-    private function brightness_image(array $values)
-    {	
-    	foreach ($values as $alias => $value) {
+	private function brightness_image(array $values)
+	{	
+		foreach ($values as $alias => $value) {
 			
 			if(isset($this->images[$alias])) 
 				$this->images[$alias] -> brightness($value);
 		}
-    }
+	}
 
 
-	
+
 
 	/*                       *
 	*------------------------*
@@ -372,7 +372,7 @@ use ImageBuilder\Image as Image;
 
 		$mime = self::generate_mime($info['mime']);
 
-        return new Image(self::create_resource($from, $mime), self::read_path($from, $mime), [$info[0], $info[1]]);
+		return new Image(self::create_resource($from, $mime), self::read_path($from, $mime), [$info[0], $info[1]]);
 	}
 
 	private static function create_resource(string $from, string $mime)
@@ -403,29 +403,29 @@ use ImageBuilder\Image as Image;
 		$name = substr($full, 0, -4);
 		$mime = $mi === false ? @end(explode('.', $full)) : $mi;
 		$path = implode('/', $vars).'/';
-	
+
 		return [$path, $name, $mime];
 
 	}
 
 	private static function is_size_values(string $size)
-    {
+	{
 		return preg_match('/((^\d{2,}x\d{2,}$)|(^\*x\d{2,}$)|(^\d{2,}x\*$)|(^\_x\d{2,}$)|(^\d{2,}x\_$))/i', trim($size));
-    }
+	}
 
 	private static function is_crop_values(string $info)
 	{
 		return preg_match('/(center|left|right|top|bottom|\d{2,})\s(center|left|right|top|bottom|\d{2,})\s((\d{2,}x\d{2,})|(\*x\d{2,})|(\d{2,}x\*)|(\_x\d{2,})|(\d{2,}x\_))/', trim($info));
 	}
 
-   	private static function is_url(string $from)
-    {
-        return preg_match('/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/', $from);
-    }
- 	
-    private static function generate_mime($type)
-    {
-    	switch($type){
+	private static function is_url(string $from)
+	{
+		return preg_match('/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/', $from);
+	}
+
+	private static function generate_mime($type)
+	{
+		switch($type){
 			case "image/jpeg":
 			case "image/jpg":
 				return "jpg";
@@ -433,6 +433,6 @@ use ImageBuilder\Image as Image;
 				return "png";
 			default: return "jpg";
 		}
-    }
+	}
 
 }
