@@ -19,9 +19,9 @@
 |--------------------------------------------------------------------------*/
 
 
-namespace ImageBuilder;	
+namespace ImageEditor;	
 
-use ImageBuilder\ImageBuilderException as ImageBuilderException;
+use ImageEditor\ImageBuilderException as ImageBuilderException;
 
 
 class Image {
