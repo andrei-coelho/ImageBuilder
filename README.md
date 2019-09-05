@@ -5,7 +5,7 @@
 
 # Image Builder
 
-ImageBuilder is a php library for easily creating / editing images. It uses the GD library for file generation.
+ImageEditor is a php library for easily creating / editing images. It uses the GD library for file generation.
 
 # Dependencies
 
@@ -17,17 +17,17 @@ ImageBuilder is a php library for easily creating / editing images. It uses the 
 Using the library is very simple. Just include the autoload and you're done!
 
 ```php
-require "ImageBuilder/autoload.php";
+require "ImageEditor/autoload.php";
 
-use ImageBuilder\BuildImage as BuildImage;
+use ImageEditor\EditImage as EditImage;
 ```
 To edit and create images you need to use the BuildImage class starting with the static method from and passing the image that will be used as a model.
 ```php
-BuildImage::from('images/zacarias.jpg') 
+EditImage::from('images/zacarias.jpg') 
 ```
 then use the functions that will be applied to the image and save it
 ```php
-BuildImage::from('images/zacarias.jpg')
+EditImage::from('images/zacarias.jpg')
 ->negate() // function
 ->save(); // save
 ```
@@ -51,7 +51,7 @@ So you need to edit it and create 2 more photos following the rules:
 How will I do this using this library?
 
 ```php
-BuildImage::
+EditImage::
     from('images/zacarias.jpg', 'big') // create first image with alias 'big' using image in 'images' folder
     ->copy(['mid', 'small'])           // and more 2 images with alias is 'mid' and 'small'
     ->crop('center center 300x*')      // crop the image in the center using 300px width
