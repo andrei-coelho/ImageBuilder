@@ -7,7 +7,7 @@
  *
  */
 
-namespace ImageBuilder;
+namespace ImageEditor;
 
 class ImageBuilderException extends \Exception {
 
