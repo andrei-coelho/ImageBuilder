@@ -2,10 +2,10 @@
 
 require "../autoload.php";
 
-use ImageBuilder\BuildImage as BuildImage;
+use ImageEditor\EditImage as EditImage;
 
-$images = BuildImage::
-from('images/rabbit.png', 'h')
+EditImage::
+    from('images/rabbit.png', 'h')
     ->copy(['v', 'b', 'n'])
     ->flip('horizontal', 'h')
     ->flip('vertical', 'v')
