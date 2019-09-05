@@ -75,21 +75,3 @@ The result is this ...
 ![zacarias_happy](https://user-images.githubusercontent.com/38328740/64267938-a28a2e00-cf0d-11e9-8624-2ae68163a3b2.gif)
 
 
-## **negate()**
-
-`->negate($alias = false)`
-
-#### Description
-
-Use this function to invert the colors of the image.
-
-```php
-BuildImage::
-    from('images/turtle.jpg')
-    ->negate()
-    ->save(); 
-```
-
-![negate](https://user-images.githubusercontent.com/38328740/64309721-e748b000-cf73-11e9-9a3f-78adcdc890c1.png)
-
-
