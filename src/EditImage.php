@@ -19,13 +19,13 @@
 
 
 
-namespace ImageBuilder;
+namespace ImageEditor;
 
-use ImageBuilder\ImageBuilderException as ImageBuilderException;
-use ImageBuilder\Build as Build;
-use ImageBuilder\Image as Image;
+use ImageEditor\ImageBuilderException as ImageBuilderException;
+use ImageEditor\Build as Build;
+use ImageEditor\Image as Image;
 
-class BuildImage {
+class EditImage {
 
 
 	/**
@@ -72,9 +72,9 @@ class BuildImage {
 	* @param  array   $alias
 	* @return BuildImage
 	*/
-	public static function from(string $from, string $alias = null) : BuildImage
+	public static function from(string $from, string $alias = null) : EditImage
 	{
-		return $alias ? new BuildImage($from, $alias) : new BuildImage($from);
+		return $alias ? new EditImage($from, $alias) : new EditImage($from);
 	}
 
 
