@@ -84,20 +84,20 @@ class BuildImage {
 	* @param  mixed (array or integer)  $argument
 	* @return this   object
 	*/
-	public function copy($argument)
+	public function copy($value)
 	{	
 		$this -> mod = true;
 
 		# if argument is integer, create new copies with number sent
-		if(is_int($argument) && $argument > 0)
+		if(is_int($value) && $value > 0)
 		{
-			for ($i=0; $i < $argument; $i++) 
+			for ($i=0; $i < $value; $i++) 
 				$this -> images[] = self::create_image($this->from);
 		} 
 		# if the argument is array, create new copies using aliased value
-		else if(is_array($argument))
+		else if(is_array($value))
 		{
-			foreach ($argument as $alias)
+			foreach ($value as $alias)
 				if(!is_bool($alias))
 				$this -> images[$alias] = self::create_image($this->from);
 		}
@@ -160,7 +160,7 @@ class BuildImage {
 	* Set new size of all Images 
 	*
 	* @param  string   $size
-	* @param  string   $alias
+	* @param  mixed    $alias
 	* @return this     object
 	*/
 	public function resize(string $size, $alias = false)
@@ -193,11 +193,11 @@ class BuildImage {
 	/**
 	* Set crop of all Images 
 	*
-	* @param  mix      $values
-	* @param  mix      $alias
-	* @return this     object
+	* @param  string     $values
+	* @param  mixed      $alias
+	* @return this       object
 	*/
-	public function crop($values, $alias = false)
+	public function crop(string $values, $alias = false)
 	{	
 		if(!self::is_crop_values($values)) throw new ImageBuilderException(3, $values);
 
@@ -228,6 +228,7 @@ class BuildImage {
 	* Flip all Images 
 	*
 	* @param  string   $size
+	* @param  mixed    $alias
 	* @return this     object
 	*/
 	public function flip(string $flip, $alias = false)
@@ -403,14 +404,14 @@ class BuildImage {
 	{
 		preg_match('/[^\s]+[^\s\/]+\.[\w]{3}/', $path, $result);
 
-		if(count($result) == 0) return false;
+		if(count($result) == 0)return false;
 
 		$vars = explode('/', $result[0]);
 		$full = array_pop($vars);
 		$name = substr($full, 0, -4);
 		$mime = $mi === false ? @end(explode('.', $full)) : $mi;
-		$path = implode('/', $vars).'/';
-
+		$path = count($vars) > 0 ? implode('/', $vars).'/' : "";
+		
 		return [$path, $name, $mime];
 
 	}
