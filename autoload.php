@@ -2,10 +2,10 @@
 
 spl_autoload_register(function($name) {
 	
-	$prefix = 'ImageBuilder\\';
+	$prefix = 'ImageEditor\\';
 
 	if(strpos($name, $prefix) !== 0){
-		// its not a ImageBuilder classes
+		// its not a ImageEditor classes
 		return;
 	}
 
