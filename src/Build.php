@@ -19,10 +19,10 @@
 
 
 
-namespace ImageBuilder;
+namespace ImageEditor;
 
-use ImageBuilder\ImageBuilderException as ImageBuilderException;
-use ImageBuilder\Image as Image;
+use ImageEditor\ImageBuilderException as ImageBuilderException;
+use ImageEditor\Image as Image;
 
 class Build {
 
