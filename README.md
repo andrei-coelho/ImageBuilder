@@ -31,6 +31,9 @@ BuildImage::from('images/zacarias.jpg')
 ->negate() // function
 ->save(); // save
 ```
+[See the wiki for more informations](../../wiki/Using-functions)
+
+
 # Example
 
 Imagine you have a picture like this:
@@ -39,7 +42,7 @@ Imagine you have a picture like this:
 
 So you need to edit it and create 2 more photos following the rules:
 
-* There will be 3 images in total (large, mig, small)
+* There will be 3 images in total (big, mid, small)
 * All of them need to be clipped.
 * Big will have a width of 300px
 * Mid needs to be clearer and width of 200px
@@ -67,7 +70,26 @@ The result is this ...
 ![zacarias_mid](https://user-images.githubusercontent.com/38328740/64267806-62c34680-cf0d-11e9-9373-64cf1ee3cf28.jpg)
 ![zacarias_small](https://user-images.githubusercontent.com/38328740/64267807-62c34680-cf0d-11e9-9d44-988fff909650.jpg)
 
-# Enjoy!
+# Be happy!
 
 ![zacarias_happy](https://user-images.githubusercontent.com/38328740/64267938-a28a2e00-cf0d-11e9-8624-2ae68163a3b2.gif)
+
+
+## **negate()**
+
+`->negate($alias = false)`
+
+#### Description
+
+Use this function to invert the colors of the image.
+
+```php
+BuildImage::
+    from('images/turtle.jpg')
+    ->negate()
+    ->save(); 
+```
+
+![negate](https://user-images.githubusercontent.com/38328740/64309721-e748b000-cf73-11e9-9a3f-78adcdc890c1.png)
+
 
