@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 ***
 
-# Image Builder
+# Image Editor
 
 ImageEditor is a php library for easily creating / editing images. It uses the GD library for file generation.
 
