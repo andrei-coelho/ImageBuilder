@@ -1,5 +1,4 @@
 ![image editor logo](https://user-images.githubusercontent.com/38328740/64390638-0733ae80-d01c-11e9-840d-2c7eede5d811.png)
-[![Status](https://img.shields.io/badge/status-active-success.svg)]() 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 ***
 
