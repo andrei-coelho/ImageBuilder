@@ -9,7 +9,7 @@ ImageEditor is a php library for easily creating / editing images. It uses the G
 
 # Dependencies
 
-* PHP 5+
+* PHP 5.3 +
 * [GD lib](https://www.php.net/manual/pt_BR/book.image.php)
 
 # Usage
