@@ -105,6 +105,29 @@ class Image {
 		$this -> filters['brightness'] = $level;
 	}
 
+	public function gaussian(int $level){
+		$this -> filters['gaussian'] = $level;
+	}
+
+	public function smooth(int $level){
+		$this -> filters['smooth'] = $level;
+	}
+
+	public function pixelate(array $vars){
+		$this -> filters['pixelate'] = $vars;
+	}
+
+	public function contrast(int $level){
+		$this -> filters['contrast'] = $level;
+	}
+
+	public function emboss(){
+		$this -> filters['emboss'] = true;
+	}
+
+	public function scatter(array $vars){
+		$this -> filters['scatter'] = $vars;
+	}
 
 
 }

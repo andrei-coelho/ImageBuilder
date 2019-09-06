@@ -312,6 +312,35 @@ class EditImage {
 
 
 	/**
+	* Blurs the image using the Gaussian method
+	*
+	* @param  mixed    $alias
+	* @return this     object
+	*/
+	public function gaussian(int $level, $alias = false)
+	{	
+		if($alias){
+			$this->images[$alias] -> gaussian();
+			return $this;
+		}
+		foreach ($this->images as $img)
+			$img -> gaussian($level);
+
+		return $this;
+	}
+
+
+	private function gaussian_image(array $values)
+	{	
+		foreach ($values as $alias => $value) {
+			
+			if(isset($this->images[$alias])) 
+				$this->images[$alias] -> gaussian();
+		}
+	}
+
+
+	/**
 	* Converts the image into grayscale
 	*
 	* @param  mixed    $alias
@@ -369,6 +398,173 @@ class EditImage {
 		}
 	}
 
+
+	/**
+	* Makes the image smoother
+	*
+	* @param  int      $level
+	* @param  mixed    $alias
+	* @return this     object
+	*/
+	public function smooth(int $level, $alias = false)
+	{	
+		if($alias){
+			$this->images[$alias] -> smooth($level);
+			return $this;
+		}
+		foreach ($this->images as $img)
+			$img -> smooth($level);
+
+		return $this;
+	}
+
+
+	private function smooth_image(array $values)
+	{	
+		foreach ($values as $alias => $value) {
+			
+			if(isset($this->images[$alias])) 
+				$this->images[$alias] -> smooth($value);
+		}
+	}
+
+
+
+	/**
+	* Applies pixelation effect to the image
+	*
+	* @param  int      $level
+	* @param  mixed    $suavization
+	* @param  mixed    $alias
+	* @return this     object
+	*/
+	public function pixelate(int $level, $suavization = true, $alias = false)
+	{	
+		if($alias){
+			$this->images[$alias] -> pixelate([$level, (int)$suavization]);
+			return $this;
+		}
+		foreach ($this->images as $img)
+			$img -> pixelate([$level, (int)$suavization]);
+
+		return $this;
+	}
+
+
+	private function pixelate_image(array $values)
+	{	
+		foreach ($values as $alias => $value) {
+			
+			if(isset($this->images[$alias]) && is_array($value)){
+				$vals = count($value) == 2 ? $value : [$value[0], true];
+				$this->images[$alias] -> pixelate($vals);
+			}
+				
+		}
+	}
+
+
+
+	/**
+	* Changes the contrast of the image
+	*
+	* @param  int      $level
+	* @param  mixed    $alias
+	* @return this     object
+	*/
+	public function contrast(int $level, $alias = false)
+	{	
+		if($alias){
+			$this->images[$alias] -> contrast($level);
+			return $this;
+		}
+		foreach ($this->images as $img)
+			$img -> contrast($level);
+
+		return $this;
+	}
+
+
+	private function contrast_image(array $values)
+	{	
+		foreach ($values as $alias => $value) {
+			
+			if(isset($this->images[$alias])){
+				$this->images[$alias] -> contrast($value);
+			}
+				
+		}
+	}
+
+
+	/**
+	* Embosses the image.
+	*
+	* @param  int      $level
+	* @param  mixed    $alias
+	* @return this     object
+	*/
+	public function emboss($alias = false)
+	{	
+		if($alias){
+			$this->images[$alias] -> emboss();
+			return $this;
+		}
+		foreach ($this->images as $img)
+			$img -> emboss();
+
+		return $this;
+	}
+
+
+	private function emboss_image(array $values)
+	{	
+		foreach ($values as $alias => $value) {
+			
+			if(isset($this->images[$alias])){
+				$this->images[$alias] -> contrast($value);
+			}
+				
+		}
+	}
+
+
+	/**
+	* Applies scatter effect to the image
+	*
+	* @param  mixed    $alias
+	* @return this     object
+	*/
+	
+
+	/* 
+
+	// scatter php 7.4
+
+	public function scatter(int $level1, int $level2, $alias = false)
+	{	
+		if($alias){
+			$this->images[$alias] -> scatter([$level1, $level2]);
+			return $this;
+		}
+		foreach ($this->images as $img)
+			$img -> scatter([$level1, $level2]);
+
+		return $this;
+	}
+
+
+	private function scatter_image(array $values)
+	{	
+		foreach ($values as $alias => $value) {
+			
+			if(isset($this->images[$alias]) && is_array($value) && count($value) === 2)
+				$this->images[$alias] -> scatter([(int)$value[0], (int)$value[1]]);
+		}
+	}
+	
+	
+	*/
 
 
 

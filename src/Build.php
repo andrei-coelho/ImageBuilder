@@ -157,6 +157,40 @@ class Build {
 		imagefilter($image -> resource, IMG_FILTER_BRIGHTNESS, $level);
 	}
 
+	private static function gaussian(Image $image, int $level)
+	{	
+		$level = $level <= 0 ? 1 : $level;
+
+		for ($i=0; $i < $level; $i++) 
+			imagefilter($image -> resource, IMG_FILTER_GAUSSIAN_BLUR);
+		
+	}
+
+	private static function smooth(Image $image, int $level)
+	{
+		imagefilter($image -> resource, IMG_FILTER_SMOOTH, $level);
+	}
+
+	private static function pixelate(Image $image, array $vars)
+	{
+		imagefilter($image -> resource, IMG_FILTER_PIXELATE, $vars[0], $vars[1]);
+	}
+
+	private static function contrast(Image $image, int $level)
+	{
+		imagefilter($image -> resource, IMG_FILTER_CONTRAST, $level);
+	}
+
+	private static function emboss(Image $image)
+	{
+		imagefilter($image -> resource, IMG_FILTER_EMBOSS);
+	}
+
+	private static function scatter(Image $image, array $vars)
+	{
+		imagefilter($image -> resource, IMG_FILTER_SCATTER, $vars[0], $vars[1]);
+	}
+
 
 	/*                       *
 	*------------------------*
