@@ -150,6 +150,7 @@ class EditImage {
 	}
 
 
+
 	/*                       *
 	*------------------------*
 	*    ACTIONS   METHODS   *
@@ -284,6 +285,7 @@ class EditImage {
 	/**
 	* Reverses all colors of the image 
 	*
+	* @param  mixed    $alias
 	* @return this     object
 	*/
 	public function negate($alias = false)
@@ -312,6 +314,7 @@ class EditImage {
 	/**
 	* Converts the image into grayscale
 	*
+	* @param  mixed    $alias
 	* @return this     object
 	*/
 	public function grayscale($alias = false)
@@ -340,6 +343,8 @@ class EditImage {
 	/**
 	* Changes the brightness of the image
 	*
+	* @param  int      $level
+	* @param  mixed    $alias
 	* @return this     object
 	*/
 	public function brightness(int $level, $alias = false)
@@ -428,7 +433,7 @@ class EditImage {
 
 	private static function is_url(string $from)
 	{
-		return preg_match('/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/', $from);
+		return preg_match('/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/', trim($from));
 	}
 
 	private static function generate_mime($type)
