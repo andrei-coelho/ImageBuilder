@@ -20,7 +20,7 @@ require "ImageEditor/autoload.php";
 
 use ImageEditor\EditImage as EditImage;
 ```
-To edit and create images you need to use the BuildImage class starting with the static method from and passing the image that will be used as a model.
+To edit and create images you need to use the `ImageEditor` class starting with the static method `from` and passing the image that will be used as a model.
 ```php
 EditImage::from('images/zacarias.jpg') 
 ```
