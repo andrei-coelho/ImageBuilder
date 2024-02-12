@@ -85,24 +85,42 @@ class EditImage {
 	* @return this   object
 	*/
 	public function copy($value)
-	{	
-		$this -> mod = true;
-
-		# if argument is integer, create new copies with number sent
-		if(is_int($value) && $value > 0)
-		{
-			for ($i=0; $i < $value; $i++) 
-				$this -> images[] = self::create_image($this->from);
-		} 
-		# if the argument is array, create new copies using aliased value
-		else if(is_array($value))
-		{
-			foreach ($value as $alias)
-				if(!is_bool($alias))
-				$this -> images[$alias] = self::create_image($this->from);
-		}
-
-		return $this;
+	{
+	    if (is_int($value)) {
+	        return $this->copyMultiple($value);
+	    } elseif (is_array($value)) {
+	        return $this->copyWithAliases($value);
+	    } else {
+	        throw new InvalidArgumentException("Invalid argument type for copy method.");
+	    }
+	}
+	
+	protected function copyMultiple(int $count)
+	{
+	    if ($count <= 0) {
+	        throw new InvalidArgumentException("Count must be greater than 0.");
+	    }
+	    
+	    $originalImage = self::create_image($this->from);
+	    for ($i = 0; $i < $count; $i++) {
+	        $this->images[] = clone $originalImage;
+	    }
+	    
+	    return $this;
+	}
+	
+	protected function copyWithAliases(array $aliases)
+	{
+	    $originalImage = self::create_image($this->from);
+	    foreach ($aliases as $alias) {
+	        if (!is_bool($alias)) {
+	            $this->images[$alias] = clone $originalImage;
+	        } else {
+	            throw new InvalidArgumentException("Alias cannot be a boolean value.");
+	        }
+	    }
+	    
+	    return $this;
 	}
 
 
